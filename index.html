@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="description" content="ระบบตรวจสอบรายการตรวจสุขภาพประจำปี 2569 - กลุ่มงานบริการด้านปฐมภูมิแบบองค์รวม รพ.ทับคล้อ">
+<title>ตรวจสอบสุขภาพประจำปี | รพ.ทับคล้อ</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><path d='M32 4L8 16v16c0 14 10.7 24.7 24 28 13.3-3.3 24-14 24-28V16L32 4z' fill='%231D70B8'/><rect x='28' y='20' width='8' height='24' rx='2' fill='white'/><rect x='20' y='28' width='24' height='8' rx='2' fill='white'/></svg>">
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect, useRef, useMemo } = React;
+
+
+
+const STAFF = [{"id":"3660600232157","name":"นางสาวปัทมา สายสุจริต","age":46,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"3660400293039","name":"นางสมถวิล บุญศัพย์","age":57,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"1660600020200","name":"น.ส.อารี สุดนุ่ม","age":40,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"1100701013181","name":"น.ส.โชติกา แป้นอ่อน","age":36,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"1401200008396","name":"นายอภินันท์ ตองติดรัมย์","age":41,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"3669800146163","name":"นางยุพิน สุวรรณตันทุลา","age":52,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"3450800373805","name":"นายอรัญ ทิ้งโคตร","age":48,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"3660800319230","name":"นางอณัญญา แย้มทอง","age":47,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"3660600551031","name":"นางสมใจ ดีมี","age":55,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"3660400029048","name":"นางณิชาภา หาญกำจัดภัย","age":58,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"3669800145787","name":"น.ส.ไพรัช ม่วงศรี","age":54,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"3660800192477","name":"น.ส.บุญนำ ชาติวรรณ","age":48,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"3669700022519","name":"น.ส.สหัสา วิจิตรชำนาญ","age":49,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"3669700015598","name":"นางกรรณทิพย์ วัฒนประสิทธิ์","age":55,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"3660800377841","name":"น.ส.ชญาดา อ่อนพุ่ม","age":54,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"3660800292242","name":"นางเปรมวดี พัฒนสิริกุล","age":53,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"3669800084761","name":"นางสำเนียง ชื่นโพธิ์ชัย","age":60,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"3660800457055","name":"นางทัศนีย์ พรรณา","age":51,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"3660800324560","name":"น.ส.พรรณี จุลพล","age":52,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"3660101039122","name":"นางวีระนุช ก่อแก้ว","age":53,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"3660800128116","name":"นางสุรัตน์ พันธุ์รัตน์","age":54,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"3660800266161","name":"นางกัญจนา รัตนปริญญานนท์","age":48,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"3660700021620","name":"นางสกาวรัตน์ เชยจันทร์","age":52,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"3660200082808","name":"น.ส.ราตรี เวชมนัส","age":48,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"3660300247353","name":"น.ส.สุวรรณเทวี โป๊ะโดย","age":46,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"3660100100227","name":"นางณัฐฌา จ้อยสุดใจ","age":46,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"1660800001390","name":"นางนัทธมน ปิ่นร่ม","age":42,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"1660800008271","name":"นางวิไลรัตน์ ฉิมจิ๋ว","age":40,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"3660800469746","name":"นางปรานี เบ็ญจรัตน์","age":57,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"1660200006374","name":"น.ส.พรนิภา หน่อแก้ว","age":40,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"5550500533730","name":"นางรัศมี ส้มลิ้ม","age":46,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"3650101078071","name":"น.ส.นที กาทอง","age":49,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"3740200580530","name":"นายนรินทร์ เจริญสมบัติ","age":46,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"1669800030401","name":"นายพีรวิชญ์ วัฒนกุลชัย","age":40,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"3660500530466","name":"นางสุกัญญา สาริมา","age":46,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"1620100010612","name":"น.ส.พินธิรา ทิตาวงค์","age":41,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"1669800121661","name":"น.ส.วิลาสินี วัฒนกุลชัย","age":35,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"3660800376292","name":"นางอาริยา ราชคฤห์","age":50,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"1660500116515","name":"น.ส.ณิชารีย์ เก้าลิ้ม","age":33,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"1670700143389","name":"น.ส.นันทนา อัมระนันท์","age":37,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"1660500093329","name":"น.ส.เสริมศิริ ฤกษนันท์","age":37,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"1609900337487","name":"นางสาวณัฐสุดา มั่นเขตกิจ","age":30,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"1669900261022","name":"นางสาวณัฐฐินันท์ พูลเต็ม","age":31,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"1660800067901","name":"นายอดิศร ฤทธิสุทธิ์","age":31,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"1659900366827","name":"น.ส.จีรภัทร ปานรัตน์","age":36,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"3660800362747","name":"น.ส.สายฝน อาจวงษ์","age":51,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"1669800192126","name":"นางสาวนิศา บุ้นเสา","age":30,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"1669800119780","name":"นางสาวชนาภัทร บุญประสม","age":35,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"1609900190354","name":"นายพรเทพ ศรีวิภาค","age":34,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"1669900368455","name":"นายเกจิ กล่ำน้อย","age":27,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"1669900360519","name":"น.ส.นิตยา จันทร์รี","age":27,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"1669900376407","name":"น.ส.วราธิณีย์ สายทอง","age":27,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"1659900064359","name":"นายสราวุธ กุลศัตยาภิรมย์","age":41,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"1669800195648","name":"น.ส.กิตติวรรณ กันสุข","age":30,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"1659901968405","name":"นายสิทธิพนธ์ โพธิ์รุ่งเรือง","age":26,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"3670200696954","name":"นางสาวอรวรรณ คำหวาน","age":42,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"1669900386097","name":"นางสาวธนภรณ์ ประคำ","age":26,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"1669900342219","name":"นางเบญจมาศ วงศ์ลีศิริวิวัฒน์","age":28,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"1101800879200","name":"นางสาววิไลพร จันลาสี","age":28,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"1659901938395","name":"นางสาววรรณวลี ย้อมสี","age":27,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"1104300055928","name":"นายชูศิลป์ พงษ์จันทร์","age":27,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"1669800215380","name":"นางสาวเพ็ญนิภา นาหนองตูม","age":28,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"1669900360241","name":"นางสาวนันทฤทธิ์ สายอุ่นใจ","age":27,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"1669900401231","name":"นางสาวชณิธศา อุดแก้ว","age":26,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"1659900787181","name":"นายภัทรพล ชุติพงษ์วิเวท","age":29,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"1669900306875","name":"นายยตนา มาพันธ์สุ","age":29,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"3660600566705","name":"นายนิพนธ์  ดิวรางกูร","age":43,"right":"ประกันสังคม","lab":"CBC,FBS,Choles,HDL,UA,Cr"},{"id":"3660800093088","name":"นายวิรัตน์  เหล่ารอด","age":50,"right":"ประกันสังคม","lab":"CBC,Choles,HDL,UA ,Cr, X-Ray"},{"id":"3660500403740","name":"นางสาวณัชปภา  ทองจั่น","age":48,"right":"ประกันสังคม","lab":"CBC,FBS,Choles,HDL,UA,Cr"},{"id":"1669800283059","name":"นายธนภัทร ทามี","age":24,"right":"ประกันสังคม","lab":"CBC,Choles,HDL,X-Ray"},{"id":"1600101831369","name":"นายธนายุ  คันทัพ","age":25,"right":"ประกันสังคม","lab":"CBC,Choles,HDL,"},{"id":"3100602207120","name":"นางอรอนงค์  หงษ์ดวง","age":51,"right":"ประกันสังคม","lab":"CBC,FBS,Choles,HDL,UA,Cr"},{"id":"3669900112121","name":"นายธีร์วศิษฐ์  บุญธนรัชต์","age":54,"right":"ประกันสังคม","lab":"CBC,FBS,Choles,HDL,UA,Cr"},{"id":"3660800287842","name":"นายภัทราวุธ  หนูจิ๋ว","age":50,"right":"ประกันสังคม","lab":"CBC,FBS,Choles,HDL,UA,Cr"},{"id":"3660500450675","name":"นายสุทิน  ราชคฤห์","age":56,"right":"ประกันสังคม","lab":"CBC,FBS,Choles,HDL,UA,Cr,X-Ray"},{"id":"3660800319507","name":"นางสุกฤตา  ฤทธิ์สุทธิ์","age":53,"right":"ประกันสังคม","lab":"CBC,FBS,Choles,HDL,UA,Cr"},{"id":"3660800362364","name":"นางชยาภรณ์  มิ่งขวัญ","age":52,"right":"ประกันสังคม","lab":"CBC,FBS,Choles,HDL,UA,Cr"},{"id":"3660800067206","name":"นางนงค์นาจ  สินทร","age":55,"right":"ประกันสังคม","lab":"CBC,FBS,Choles,HDL,UA,Cr"},{"id":"3660800258711","name":"นางปรียะนาฎ  คำผง","age":51,"right":"ประกันสังคม","lab":"CBC,FBS,Choles,HDL,UA,Cr"},{"id":"3660800004379","name":"นายภูษิต  แสงบุญศรี","age":44,"right":"ประกันสังคม","lab":"CBC,FBS,Choles,HDL,UA,Cr"},{"id":"3660400594616","name":"นางอันชรี  พิทักษ์พงค์","age":53,"right":"ประกันสังคม","lab":"CBC,FBS,Choles,HDL,UA,Cr"},{"id":"3660800479776","name":"นางทวี  ห้างวงษ์","age":49,"right":"ประกันสังคม","lab":"CBC,FBS,Choles,HDL,UA,Cr"},{"id":"3660800333496","name":"น.ส.ภัสสร  ศาลาการ","age":46,"right":"ประกันสังคม","lab":"CBC,FBS,Choles,HDL,UA,Cr"},{"id":"3660800246810","name":"น.ส.สำรวย  สุขคุ้ม","age":50,"right":"ประกันสังคม","lab":"CBC,FBS,Choles,HDL,UA,Cr"},{"id":"3660800119991","name":"นายกิตติวัตร  สว่างโลก","age":45,"right":"ประกันสังคม","lab":"CBC,FBS,Choles,HDL,UA,Cr"},{"id":"3660800274678","name":"นายมานพ  พิทักษ์พงค์","age":52,"right":"ประกันสังคม","lab":"CBC,FBS,Choles,HDL,UA,Cr"},{"id":"3660800367838","name":"นายนพดล  สินทร","age":56,"right":"ประกันสังคม","lab":"CBC,FBS,Choles,HDL,UA,Cr"},{"id":"3660800448897","name":"นายยอดยิ่ง  สิงห์แก้ว","age":46,"right":"ประกันสังคม","lab":"CBC,FBS,Choles,HDL,UA,Cr"},{"id":"3660800352768","name":"นายสมศักดิ์  คำผง","age":52,"right":"ประกันสังคม","lab":"CBC,FBS,Choles,HDL,UA,Cr"},{"id":"3660800271709","name":"นายสุดเขต  สุขพันธ์","age":42,"right":"ประกันสังคม","lab":"CBC,FBS,Choles,HDL,UA,Cr"},{"id":"3660800378384","name":"นายมาโนช  โพธิ์ศรี","age":54,"right":"ประกันสังคม","lab":"CBC,FBS,Choles,HDL,UA,Cr"},{"id":"3660800299450","name":"นายไพรัช  เทียนสา","age":56,"right":"ประกันสังคม","lab":"CBC,FBS,Choles,HDL,UA,Cr"},{"id":"5660800003336","name":"นางสุนิสา  บัวเนียม","age":48,"right":"ประกันสังคม","lab":"CBC,FBS,Choles,HDL,UA,Cr"},{"id":"3660400039094","name":"น.ส.สายชล  ผลนิโคตร","age":43,"right":"ประกันสังคม","lab":"CBC,FBS,Choles,HDL,UA,Cr"},{"id":"1660800035294","name":"น.ส.สุภาวดี  เกิดทุ้ย","age":38,"right":"ประกันสังคม","lab":"CBC,FBS,Choles,HDL,UA,Cr"},{"id":"1669800143877","name":"น.ส.ณัฐธิดา  บุญลือ","age":33,"right":"ประกันสังคม","lab":"CBC,Choles,HDL,X-Ray"},{"id":"3671000265560","name":"น.ส.ชนนิกานต์  ทับเขียว","age":50,"right":"ประกันสังคม","lab":"CBC,FBS,Choles,HDL,UA,Cr"},{"id":"1669800070578","name":"นายอนิรุต  เผ่าอินตา","age":38,"right":"ประกันสังคม","lab":"CBC,FBS,Choles,HDL,UA,Cr"},{"id":"3600800655485","name":"นายบำรุง  ทองดี","age":45,"right":"ประกันสังคม","lab":"CBC,FBS,Choles,HDL,UA,Cr"},{"id":"1660600124269","name":"นางสาวขนิษฐา ภู่ชัย","age":31,"right":"ประกันสังคม","lab":"Choles,HDL"},{"id":"1240400093690","name":"นางสาวสมฤทัย ปัสสาเวียง","age":28,"right":"ประกันสังคม","lab":"Choles,HDL"},{"id":"1619900233355","name":"นางสาวรุ่งฟ้า  เกตุสาคร","age":31,"right":"ประกันสังคม","lab":"Choles,HDL"},{"id":"1311000005581","name":"นางแววนภา  เอมแสง","age":41,"right":"ประกันสังคม","lab":"CBC,FBS,Choles,HDL,UA,Cr"},{"id":"1102002629495","name":"นส.สุมิตตา มะโนแจ่ม","age":29,"right":"ประกันสังคม","lab":"Choles,HDL"},{"id":"3660800154737","name":"นส.อัญชลี  นวลตา","age":45,"right":"ประกันสังคม","lab":"CBC,FBS,Choles,HDL,UA,Cr"},{"id":"1660800045931","name":"นส.เนตรนภา  พรสิงห์","age":36,"right":"ประกันสังคม","lab":"CBC,FBS,Choles,HDL,UA,Cr"},{"id":"1189900136834","name":"นางสาวกนกพรรณ  ตั้งคติธรรม","age":34,"right":"ประกันสังคม","lab":"Choles,HDL"},{"id":"1660800077574","name":"นส.สนธิดา  สุขสถิตย์","age":29,"right":"ประกันสังคม","lab":"CBC,Choles,HDL,X-Ray"},{"id":"3310500604713","name":"นส.นิดตยงค์  เกตุกระโทก","age":43,"right":"ประกันสังคม","lab":"CBC,FBS,Choles,HDL,UA,Cr"},{"id":"1669800103131","name":"นส.ผกาวรรณ  นิ่มทอง","age":36,"right":"ประกันสังคม","lab":"CBC,FBS,Choles,HDL,UA,Cr"},{"id":"1669800145446","name":"น.ส.เกตศรินทร์  ชังคะนาก","age":33,"right":"ประกันสังคม","lab":"CBC,Choles,HDL,X-Ray"},{"id":"1671000047311","name":"นายกิตติพงษ์  สมศรี","age":35,"right":"ประกันสังคม","lab":"CBC,FBS,Choles,HDL,UA,Cr"},{"id":"1669900325136","name":"นางสาวนฤมล  ประสาทสีดา","age":28,"right":"ประกันสังคม","lab":"Choles,HDL"},{"id":"1669800224842","name":"นางสาวสลาวลี  ศรีอร่าม","age":28,"right":"ประกันสังคม","lab":"Choles,HDL"},{"id":"1600101840392","name":"น.ส.จันทร์กนก  เสือโต","age":25,"right":"ประกันสังคม","lab":"Choles,HDL"},{"id":"1100501426296","name":"น.ส.ฐาปณีย์  สุขนวล","age":28,"right":"ประกันสังคม","lab":"Choles,HDL"},{"id":"1679900144981","name":"น.ส.วนิฐา  ลีละโรจน์","age":38,"right":"ประกันสังคม","lab":"CBC,FBS,Choles,HDL,UA,Cr"},{"id":"1669800122322","name":"นายพีชญา  วชิรอาภาลัย","age":35,"right":"ประกันสังคม","lab":"CBC,FBS,Choles,HDL,UA,Cr"},{"id":"1669800080441","name":"น.ส.ปาริชาติ  สิทธิ์น้อย","age":37,"right":"ประกันสังคม","lab":"CBC,FBS,Choles,HDL,UA,Cr"},{"id":"1169800213071","name":"น.ส.กมลลักษณ์  กะออมแก้ว","age":25,"right":"ประกันสังคม","lab":"Choles,HDL"},{"id":"1619900352524","name":"น.ส.วชิรญาณ์  กอบธัญกิจ","age":26,"right":"ประกันสังคม","lab":"Choles,HDL"},{"id":"1660800096587","name":"น.ส.ทยาวี  ศรีโปฎก","age":24,"right":"ประกันสังคม","lab":"Choles,HDL"},{"id":"1660800096862","name":"น.ส.นิศาชล  อินสอาด","age":24,"right":"ประกันสังคม","lab":"Choles,HDL"},{"id":"1669900375508","name":"นายสิทธิพร  พรมชาติ","age":27,"right":"ประกันสังคม","lab":"Choles,HDL"},{"id":"1669900329611","name":"นส.ชัญญา  แสงกล้า","age":28,"right":"ประกันสังคม","lab":"CBC,Choles,HDL"},{"id":"1630400086045","name":"นส.พิมพร  อ้ายมาดน้อย","age":28,"right":"ประกันสังคม","lab":"CBC,Choles,HDL"},{"id":"1669800296487","name":"นายธนากร พึ่งสนิท","age":23,"right":"ประกันสังคม","lab":"CBC,Choles,HDL,X-Ray"},{"id":"1669900472961","name":"น.ส.พัชรวลัย จุลพันธ์","age":23,"right":"ประกันสังคม","lab":"CBC,Choles,HDL,X-Ray"},{"id":"1669800299818","name":"น.ส.สกุลกานต์ ทาดี","age":23,"right":"ประกันสังคม","lab":"CBC,Choles,HDL,X-Ray"},{"id":"1601101356815","name":"นส.อารีรัตน์ พลายนาค","age":25,"right":"ประกันสังคม","lab":"CBC,Choles,HDL"},{"id":"1103700887032","name":"นายปาณสาร วัฒนศิริ","age":33,"right":"ประกันสังคม","lab":"Choles,HDL"},{"id":"1660800078589","name":"นายอินทร์ทัช  สินทร","age":29,"right":"ประกันสังคม","lab":"Choles,HDL"},{"id":"1760500111431","name":"นส.ธารทิพย์  ชูเนื่อง","age":36,"right":"UC","lab":""},{"id":"1660800083574","name":"นส.สิรินาถ  แสงจันทร์","age":28,"right":"UC","lab":""},{"id":"1669800290799","name":"นายนพรัตน์  แก้วอร่าม","age":24,"right":"UC","lab":""},{"id":"3660100483614","name":"นางวรุณยุพา  นิยมญาติ","age":63,"right":"UC","lab":""},{"id":"1669800267193","name":"นายวีรภัทร  มาน้อย","age":26,"right":"UC","lab":""},{"id":"3660800324098","name":"นางไพลิน  โต๊ะนาค","age":46,"right":"UC","lab":""},{"id":"2501800053462","name":"นางชยาภรณ์  วิชัยสุนทร","age":36,"right":"UC","lab":""},{"id":"1311000169001","name":"น.ส.มะลัยวรรณ  วงษ์เพ็ญ","age":34,"right":"UC","lab":""},{"id":"1660400098094","name":"น.ส.ญาณุมาศ  โพธิ์ดก","age":29,"right":"UC","lab":""},{"id":"1669800297807","name":"น.ส.ณัฎฐธิดา  พรกลิ่น","age":23,"right":"UC","lab":""},{"id":"1669800265301","name":"นายธีรภัทร คำหนาหนัก","age":26,"right":"ให้สิทธิ์โครงการฟรี","lab":""},{"id":"1620500219705","name":"นายสุริยา บุตรน้ำดี","age":30,"right":"ให้สิทธิ์โครงการฟรี","lab":""},{"id":"1669800277997","name":"นางเปรมฤทัย เหล่ารอด","age":25,"right":"UC","lab":""},{"id":"1669800113269","name":"นางสาวศศิธร เกิดทวีสุข","age":35,"right":"ให้สิทธิ์โครงการฟรี","lab":""},{"id":"1660800099888","name":"นางสาวชวัลรัตน์ พุทธรุณ","age":23,"right":"UC","lab":""},{"id":"3660800371568","name":"นายณรงค์  ฤทธิ์สุทธิ์","age":56,"right":"สิทธิเบิกได้ (CSCD)","lab":""},{"id":"1669900374340","name":"นางสาวสิรินทร์ รัตนเรืองอำไพ","age":27,"right":"UC","lab":""},{"id":"1669900476347","name":"นางสาวอรปรียา ละมูล","age":23,"right":"UC","lab":""}];
+
+const LAB_INFO = {
+  "CBC":{ en:"CBC", th:"ตรวจนับเม็ดเลือด", cat:"เลือด" },
+  "FBS":{ en:"FBS", th:"น้ำตาลในเลือด", cat:"เลือด" },
+  "Urine Analysis":{ en:"Urine Analysis", th:"ตรวจปัสสาวะ", cat:"ปัสสาวะ" },
+  "UA":{ en:"Uric Acid", th:"กรดยูริค", cat:"เลือด" },
+  "Cr":{ en:"Creatinine", th:"การทำงานของไต", cat:"ไต" },
+  "BUN":{ en:"BUN", th:"ยูเรียในเลือด", cat:"ไต" },
+  "Choles":{ en:"Cholesterol", th:"คอเลสเตอรอล", cat:"ไขมัน" },
+  "Cholesterol":{ en:"Cholesterol", th:"คอเลสเตอรอล", cat:"ไขมัน" },
+  "HDL":{ en:"HDL", th:"ไขมันดี", cat:"ไขมัน" },
+  "Triglyceride":{ en:"Triglyceride", th:"ไตรกลีเซอไรด์", cat:"ไขมัน" },
+  "Uric acid":{ en:"Uric Acid", th:"กรดยูริค", cat:"เลือด" },
+  "HBsAg":{ en:"HBsAg", th:"ตับอักเสบบี", cat:"ตับ" },
+  "AST":{ en:"AST", th:"เอนไซม์ตับ", cat:"ตับ" },
+  "ALT":{ en:"ALT", th:"เอนไซม์ตับ", cat:"ตับ" },
+  "ALP":{ en:"ALP", th:"เอนไซม์ ALP", cat:"ตับ" },
+  "CXR":{ en:"Chest X-Ray", th:"เอกซเรย์ปอด", cat:"เอกซเรย์" },
+  "X-Ray":{ en:"Chest X-Ray", th:"เอกซเรย์ปอด", cat:"เอกซเรย์" },
+  "Creatinine":{ en:"Creatinine", th:"การทำงานของไต", cat:"ไต" },
+};
+
+const SCHEDULE = [
+  {no:1,unit:"OPD + ER + แพทย์",date:"23 มี.ค. 69"},
+  {no:2,unit:"ห้องยา + ฝ่ายผลิต",date:"23 มี.ค. 69"},
+  {no:3,unit:"ทันตกรรม + LAB + X-ray",date:"24 มี.ค. 69"},
+  {no:4,unit:"LR + คุณภาพ + Supply",date:"24 มี.ค. 69"},
+  {no:5,unit:"แผนไทย",date:"24 มี.ค. 69"},
+  {no:6,unit:"กายภาพ",date:"24 มี.ค. 69"},
+  {no:7,unit:"IPD",date:"25 มี.ค. 69"},
+  {no:8,unit:"งานประกัน + ห้องบัตร",date:"25 มี.ค. 69"},
+  {no:9,unit:"บริหาร",date:"26 มี.ค. 69"},
+  {no:10,unit:"สุขภาพจิต",date:"27 มี.ค. 69"},
+  {no:11,unit:"งานเวช + PCU + นักโภชน์",date:"27 มี.ค. 69"},
+];
+
+function getLabs(p) {
+  if (p.right === "ประกันสังคม") {
+    if (!p.lab) return [];
+    return p.lab.split(",").map(s => s.trim()).filter(Boolean);
+  }
+  if (p.age < 35) return ["CBC","Urine Analysis","CXR"];
+  return ["CBC","Urine Analysis","FBS","BUN","Creatinine","Cholesterol","Triglyceride","Uric acid","AST","ALT","ALP","CXR"];
+}
+
+function fmtId(id) {
+  if (!id || id.length !== 13) return id;
+  return `${id[0]}-${id.slice(1,5)}-${id.slice(5,10)}-${id.slice(10,12)}-${id[12]}`;
+}
+
+const catBg = c => ({เลือด:"#FEE2E2",ปัสสาวะ:"#FEF3C7",ไต:"#DBEAFE",ไขมัน:"#FCE7F3",ตับ:"#D1FAE5",เอกซเรย์:"#E0E7FF"}[c]||"#F3F2F1");
+const catFg = c => ({เลือด:"#991B1B",ปัสสาวะ:"#92400E",ไต:"#1E40AF",ไขมัน:"#9D174D",ตับ:"#065F46",เอกซเรย์:"#3730A3"}[c]||"#383F43");
+
+const RT = {
+  "สิทธิเบิกได้ (CSCD)":{ bg:"#CCE2D8", c:"#00703C", l:"สิทธิเบิกได้ (ข้าราชการ)" },
+  "ประกันสังคม":{ bg:"#D2E2F1", c:"#003078", l:"ประกันสังคม" },
+  "UC":{ bg:"#E8D6F0", c:"#4C2C92", l:"UC (บัตรทอง)" },
+  "ให้สิทธิ์โครงการฟรี":{ bg:"#FFF1CC", c:"#594D00", l:"โครงการตรวจฟรี" },
+};
+const rt = r => RT[r]||{bg:"#F3F2F1",c:"#383F43",l:r};
+
+function App() {
+  const [q,setQ]=useState("");
+  const [result,setResult]=useState(null);
+  const [err,setErr]=useState("");
+  const [tab,setTab]=useState("search");
+  const [anim,setAnim]=useState(false);
+  const ref=useRef(null);
+
+  useEffect(()=>{ ref.current?.focus(); },[]);
+
+  const stats = useMemo(()=>{
+    const r={};
+    STAFF.forEach(s=>{r[s.right]=(r[s.right]||0)+1;});
+    return{total:STAFF.length,byRight:r,u35:STAFF.filter(s=>s.age<35).length,o35:STAFF.filter(s=>s.age>=35).length};
+  },[]);
+
+  const doSearch=()=>{
+    const c=q.replace(/[\s-]/g,"");
+    if(/^\d+$/.test(c)){
+      if(c.length!==13){setErr("กรุณากรอกเลขบัตรประชาชนให้ครบ 13 หลัก");setResult(null);return;}
+      const f=STAFF.find(s=>s.id===c);
+      if(!f){setErr("ไม่พบข้อมูลในระบบ กรุณาตรวจสอบอีกครั้ง");setResult(null);return;}
+      setErr("");setAnim(false);setTimeout(()=>{setResult(f);setAnim(true);setTab("search");},30);
+    } else {
+      const rs=STAFF.filter(s=>s.name.includes(q.trim()));
+      if(rs.length===1){setErr("");setAnim(false);setTimeout(()=>{setResult(rs[0]);setAnim(true);setTab("search");},30);}
+      else if(rs.length>1){setErr(`พบ ${rs.length} รายการ กรุณาใช้เลขบัตร 13 หลัก`);setResult(null);}
+      else{setErr("ไม่พบชื่อในระบบ");setResult(null);}
+    }
+  };
+
+  const labs=result?getLabs(result):[];
+  const rTag=result?rt(result.right):null;
+
+  return (
+    <div className="app">
+      <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+
+      {/* TOP BAR */}
+      <header className="topbar">
+        <div className="container topbar-inner">
+          <div className="topbar-left">
+            <svg width="28" height="28" viewBox="0 0 64 64" fill="none"><path d="M32 4L8 16v16c0 14 10.7 24.7 24 28 13.3-3.3 24-14 24-28V16L32 4z" fill="#1D70B8" stroke="#fff" strokeWidth="1.5"/><rect x="28" y="20" width="8" height="24" rx="2" fill="#fff"/><rect x="20" y="28" width="24" height="8" rx="2" fill="#fff"/></svg>
+            <div className="topbar-text">
+              <span className="topbar-org">กลุ่มงานบริการด้านปฐมภูมิแบบองค์รวม</span>
+              <span className="topbar-hosp">รพ.ทับคล้อ</span>
+            </div>
+          </div>
+          <span className="topbar-year">ปีงบประมาณ 2569</span>
+        </div>
+      </header>
+
+      {/* HERO */}
+      <div className="hero">
+        <div className="container">
+          <h1 className="hero-title">ตรวจสอบรายการตรวจสุขภาพประจำปี</h1>
+          <p className="hero-sub">กรอกเลขบัตรประชาชน 13 หลัก เพื่อดูรายการแลปที่ต้องตรวจ</p>
+        </div>
+      </div>
+
+      {/* MAIN */}
+      <main className="container main">
+
+        {/* SEARCH */}
+        <section className="search-section">
+          <label className="label" htmlFor="q">เลขบัตรประชาชน หรือ ชื่อ-นามสกุล</label>
+          <span className="hint">ตัวอย่าง: 3-6606-00232-15-7 หรือ ปัทมา</span>
+          <div className="search-row">
+            <input ref={ref} id="q" value={q} inputMode="text"
+              onChange={e=>{setQ(e.target.value);if(err)setErr("");}}
+              onKeyDown={e=>{if(e.key==="Enter")doSearch();}}
+              placeholder="กรอกเลข 13 หลัก หรือชื่อ"
+              className={`search-input ${err?"search-input-err":""}`}
+            />
+            <button onClick={doSearch} className="btn-primary">ค้นหา</button>
+          </div>
+          {(q||result)&&<button onClick={()=>{setQ("");setResult(null);setErr("");ref.current?.focus();}} className="btn-clear">ล้างข้อมูล</button>}
+          {err&&<div className="err-box">{err}</div>}
+        </section>
+
+        {/* TABS */}
+        <nav className="tabs">
+          {[
+            {k:"search",l:"ผลค้นหา"},
+            {k:"schedule",l:"ตารางวันตรวจ"},
+            {k:"prep",l:"การเตรียมตัว"},
+            {k:"stats",l:"สถิติ"},
+          ].map(t=>(
+            <button key={t.k} onClick={()=>setTab(t.k)}
+              className={`tab ${tab===t.k?"tab-active":""}`}>{t.l}</button>
+          ))}
+        </nav>
+
+        {/* === TAB SEARCH === */}
+        {tab==="search"&&(
+          <section className="tab-content">
+            {result?(
+              <div className="result" style={{opacity:anim?1:0,transform:anim?"none":"translateY(8px)"}}>
+
+                <div className="banner-ok">
+                  <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="9" stroke="#00703C" strokeWidth="1.5"/><path d="M6 10l3 3 5-5" stroke="#00703C" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                  <span>พบข้อมูลในระบบ</span>
+                </div>
+
+                <div className="person-header">
+                  <div className="person-label">ข้อมูลเจ้าหน้าที่</div>
+                  <h2 className="person-name">{result.name}</h2>
+                  <span className="right-tag" style={{background:rTag.bg,color:rTag.c}}>{rTag.l}</span>
+                </div>
+
+                {/* Info Cards */}
+                <div className="info-grid">
+                  <div className="info-card">
+                    <div className="info-label">เลขบัตรประชาชน</div>
+                    <div className="info-value mono">{fmtId(result.id)}</div>
+                  </div>
+                  <div className="info-card">
+                    <div className="info-label">อายุ</div>
+                    <div className="info-value">{result.age} ปี</div>
+                  </div>
+                  <div className="info-card">
+                    <div className="info-label">กลุ่มอายุ</div>
+                    <div className="info-value">{result.age<35?"น้อยกว่า 35 ปี":"35 ปีขึ้นไป"}</div>
+                  </div>
+                  <div className="info-card">
+                    <div className="info-label">รายการตรวจ</div>
+                    <div className="info-value">{labs.length} รายการ</div>
+                  </div>
+                </div>
+
+                {/* Lab */}
+                <h3 className="section-title">รายการตรวจทางห้องปฏิบัติการ</h3>
+                <p className="section-sub">
+                  {result.right==="ประกันสังคม"?"รายการที่สามารถตรวจได้ตามสิทธิ์":result.age<35?"กลุ่มอายุน้อยกว่า 35 ปี":"กลุ่มอายุ 35 ปีขึ้นไป"}
+                </p>
+
+                {labs.length>0?(
+                  <div className="lab-list">
+                    {labs.map((lab,i)=>{
+                      const info=LAB_INFO[lab]||{};
+                      return(
+                        <div key={i} className="lab-card">
+                          <div className="lab-num">{i+1}</div>
+                          <div className="lab-body">
+                            <div className="lab-en">{info.en||lab}</div>
+                            <div className="lab-th">{info.th||""}</div>
+                          </div>
+                          <span className="lab-cat" style={{background:catBg(info.cat),color:catFg(info.cat)}}>{info.cat||"-"}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ):(
+                  <div className="warn-box">ไม่พบรายการตรวจในไฟล์ กรุณาติดต่อฝ่ายบุคคล</div>
+                )}
+
+                {result.right==="ประกันสังคม"&&(
+                  <div className="info-box blue">
+                    <div className="info-box-title">หมายเหตุสิทธิประกันสังคม</div>
+                    {result.age<35&&<div>• อายุน้อยกว่า 35 ปี ตรวจได้ 5 ปี / 1 ครั้ง</div>}
+                    <div>• กรุณายื่นใบที่งานประกัน เพื่อขอ Authen และตรวจสอบรายการ</div>
+                  </div>
+                )}
+                {result.right!=="ประกันสังคม"&&(
+                  <div className="info-box gray">
+                    เจ้าหน้าที่สิทธิ์ UC นอกเขต ให้เป็นสิทธิ์โครงการฟรี / ทุกท่านได้รับ Chest X-ray
+                  </div>
+                )}
+              </div>
+            ):(
+              <div className="empty">
+                <svg width="48" height="48" viewBox="0 0 48 48" fill="none" style={{opacity:0.18}}><circle cx="21" cy="21" r="14" stroke="#505A5F" strokeWidth="2.5"/><path d="M31 31L42 42" stroke="#505A5F" strokeWidth="2.5" strokeLinecap="round"/></svg>
+                <p className="empty-title">กรอกเลขบัตรประชาชนเพื่อค้นหา</p>
+                <p className="empty-sub">ระบบจะแสดงชื่อ สิทธิ์ และรายการแลป</p>
+              </div>
+            )}
+          </section>
+        )}
+
+        {/* === TAB SCHEDULE === */}
+        {tab==="schedule"&&(
+          <section className="tab-content">
+            <h3 className="section-title">ตารางวันตรวจสุขภาพ</h3>
+            <p className="section-sub">23–27 มีนาคม 2569</p>
+            <div className="schedule-list">
+              {SCHEDULE.map((r,i)=>(
+                <div key={i} className="sched-card">
+                  <div className="sched-no">{r.no}</div>
+                  <div className="sched-body">
+                    <div className="sched-unit">{r.unit}</div>
+                    <div className="sched-date">{r.date}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="warn-box" style={{marginTop:"16px"}}>หากวันตรวจตรงกับลา/ลงเวร สามารถตรวจวันอื่นได้</div>
+          </section>
+        )}
+
+        {/* === TAB PREP === */}
+        {tab==="prep"&&(
+          <section className="tab-content">
+            <h3 className="section-title">การเตรียมตัวก่อนตรวจ</h3>
+            <p className="section-sub">ขั้นตอนการรับบริการ</p>
+            <div className="prep-list">
+              {[
+                {s:"1",t:"ลงทะเบียนเข้ารับบริการ",d:"ใช้บัตรประชาชนยืนยันตัวตน รับใบนำทาง",imp:false},
+                {s:"2",t:"วัด Vital Sign / ชั่งน้ำหนัก",d:"วัดความดัน ชีพจร วัดรอบเอว",imp:false},
+                {s:"3",t:"งดอาหาร 8-10 ชม. ก่อนเจาะเลือด",d:"FBS ดื่มน้ำเปล่าได้ / Lipid งด 12 ชม.",imp:true},
+                {s:"4",t:"นำใบนำทางพร้อมบัตรประชาชนยื่นที่ห้อง LAB หรืองานเวช",d:"เพื่อทำการเจาะเลือด (หน่วยงานใดที่ประสงค์เจาะเลือดเอง ให้นำ specimen ส่งที่งานเวช พร้อมใบนำทาง)",imp:false},
+                {s:"5",t:"เก็บปัสสาวะ",d:"clean-voided midstream / ส่งภายใน 2 ชม.",imp:false},
+                {s:"6",t:"ถ่ายเอกซเรย์ปอด",d:"เช้าหรือบ่าย ก่อน 14.00 น.",imp:false},
+                {s:"7",t:"พบแพทย์ฟังผล",d:"15.00 น. เป็นต้นไป รับใบนำทางที่ OPD",imp:false},
+              ].map((p,i)=>(
+                <div key={i} className="prep-card">
+                  <div className={`prep-num ${p.imp?"prep-num-imp":""}`}>{p.s}</div>
+                  <div className="prep-body">
+                    <div className="prep-title">{p.t}{p.imp&&<span className="badge-imp">สำคัญ</span>}</div>
+                    <div className="prep-desc">{p.d}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="info-box blue" style={{marginTop:"16px"}}>
+              <div className="info-box-title">สิทธิประกันสังคม</div>
+              ยื่นใบที่งานประกัน ขอ Authen + ตรวจสอบรายการตรวจ ก่อนเข้ารับบริการ
+            </div>
+          </section>
+        )}
+
+        {/* === TAB STATS === */}
+        {tab==="stats"&&(
+          <section className="tab-content">
+            <h3 className="section-title">สถิติภาพรวม</h3>
+            <div className="stat-grid">
+              {[
+                {l:"ทั้งหมด",v:stats.total,c:"#1D70B8"},
+                {l:"< 35 ปี",v:stats.u35,c:"#0EA5E9"},
+                {l:">= 35 ปี",v:stats.o35,c:"#D97706"},
+                {l:"ประเภทสิทธิ์",v:Object.keys(stats.byRight).length,c:"#00703C"},
+              ].map((c,i)=>(
+                <div key={i} className="stat-card">
+                  <div className="stat-val" style={{color:c.c}}>{c.v}</div>
+                  <div className="stat-label">{c.l}</div>
+                </div>
+              ))}
+            </div>
+
+            <h4 className="subsection-title">จำแนกตามสิทธิ์</h4>
+            <div className="rights-list">
+              {Object.entries(stats.byRight).sort((a,b)=>b[1]-a[1]).map(([r,n],i)=>{
+                const t=rt(r);
+                return(
+                  <div key={i} className="rights-row">
+                    <span className="right-tag-sm" style={{background:t.bg,color:t.c}}>{t.l}</span>
+                    <div className="rights-bar-wrap">
+                      <div className="rights-bar" style={{width:`${(n/stats.total*100)}%`,background:t.c}}/>
+                    </div>
+                    <span className="rights-count">{n} ({Math.round(n/stats.total*100)}%)</span>
+                  </div>
+                );
+              })}
+            </div>
+
+            <h4 className="subsection-title">เงื่อนไขรายการตรวจ</h4>
+            <div className="cond-list">
+              {[
+                {t:"เบิกได้ / UC / โครงการฟรี",s:"อายุ < 35 ปี — 3 รายการ",d:"CBC, Urine Analysis, CXR"},
+                {t:"เบิกได้ / UC / โครงการฟรี",s:"อายุ ≥ 35 ปี — 12 รายการ",d:"CBC, Urine, FBS, BUN, Cr, Chol, TG, UA, AST, ALT, ALP, CXR"},
+                {t:"ประกันสังคม",s:"ทุกกลุ่มอายุ",d:"รายการที่สามารถตรวจได้ตามสิทธิ์"},
+              ].map((c,i)=>(
+                <div key={i} className="cond-card">
+                  <div className="cond-title">{c.t}</div>
+                  <div className="cond-sub">{c.s}</div>
+                  <div className="cond-desc">{c.d}</div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* FOOTER */}
+        <footer className="footer">
+          <div>กลุ่มงานบริการด้านปฐมภูมิแบบองค์รวม รพ.ทับคล้อ</div>
+          <div>ข้อมูลในระบบ {STAFF.length} คน</div>
+        </footer>
+      </main>
+
+      <style>{`
+        *{box-sizing:border-box;margin:0;padding:0}
+        .app{min-height:100vh;background:#fff;font-family:'IBM Plex Sans Thai','Sarabun',system-ui,sans-serif;color:#0B0C0C;font-size:16px;line-height:1.6;-webkit-text-size-adjust:100%}
+        .container{max-width:960px;margin:0 auto;padding:0 16px}
+
+        /* TOPBAR */
+        .topbar{background:#1D2942;padding:12px 0;border-bottom:3px solid #1D70B8}
+        .topbar-inner{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+        .topbar-left{display:flex;align-items:center;gap:10px;color:#fff}
+        .topbar-text{display:flex;flex-direction:column;line-height:1.2}
+        .topbar-org{font-size:11px;color:#93C5FD;font-weight:500;letter-spacing:0.3px}
+        .topbar-hosp{font-size:15px;font-weight:600;color:#fff}
+        .topbar-year{font-size:12px;color:#94A3B8}
+
+        /* HERO */
+        .hero{background:#1D70B8;padding:24px 0 28px}
+        .hero-title{font-size:clamp(20px,5vw,30px);font-weight:700;color:#fff;line-height:1.25;margin-bottom:4px}
+        .hero-sub{font-size:15px;color:#D2E2F1}
+
+        /* MAIN */
+        .main{padding-bottom:24px}
+
+        /* SEARCH */
+        .search-section{padding:20px 0;border-bottom:1px solid #E5E7EB}
+        .label{font-size:17px;font-weight:700;margin-bottom:4px;display:block}
+        .hint{font-size:13px;color:#6B7280;display:block;margin-bottom:10px}
+        .search-row{display:flex;gap:0}
+        .search-input{flex:1;min-width:0;padding:12px 14px;font-size:18px;font-family:inherit;border:2px solid #0B0C0C;border-right:none;outline:none}
+        .search-input:focus{outline:3px solid #FFD700;outline-offset:0;z-index:1}
+        .search-input-err{border-color:#D4351C}
+        .search-input::placeholder{color:#B1B4B6;font-size:15px}
+        .btn-primary{padding:12px 20px;font-size:16px;font-weight:700;font-family:inherit;border:none;background:#00703C;color:#fff;cursor:pointer;white-space:nowrap;-webkit-tap-highlight-color:transparent}
+        .btn-primary:active{background:#005A30}
+        .btn-clear{margin-top:10px;padding:8px 16px;font-size:13px;font-family:inherit;border:1px solid #B1B4B6;background:#fff;color:#0B0C0C;cursor:pointer}
+        .err-box{margin-top:12px;padding:12px 16px;border-left:4px solid #D4351C;background:#FDF0ED;font-size:14px;color:#6A0B00;font-weight:500}
+
+        /* TABS */
+        .tabs{display:flex;gap:0;border-bottom:1px solid #B1B4B6;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+        .tabs::-webkit-scrollbar{display:none}
+        .tab{padding:12px 16px;font-size:14px;font-weight:400;font-family:inherit;border:none;border-bottom:4px solid transparent;background:none;color:#6B7280;cursor:pointer;white-space:nowrap;-webkit-tap-highlight-color:transparent}
+        .tab-active{font-weight:700;color:#1D70B8;border-bottom-color:#1D70B8}
+
+        /* TAB CONTENT */
+        .tab-content{padding:20px 0 28px}
+
+        /* RESULT */
+        .result{transition:all 0.35s ease}
+        .banner-ok{padding:12px 16px;background:#CCE2D8;border-left:4px solid #00703C;display:flex;align-items:center;gap:10px;font-size:15px;font-weight:600;color:#00703C;margin-bottom:20px}
+        .person-header{border-left:4px solid #1D70B8;padding-left:16px;margin-bottom:20px}
+        .person-label{font-size:12px;color:#6B7280;font-weight:500;margin-bottom:2px}
+        .person-name{font-size:clamp(22px,5vw,28px);font-weight:700;line-height:1.2;margin-bottom:8px}
+        .right-tag{display:inline-block;padding:4px 14px;font-size:14px;font-weight:600}
+
+        /* INFO GRID */
+        .info-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:#E5E7EB;border:1px solid #E5E7EB;margin-bottom:24px}
+        .info-card{background:#fff;padding:14px 16px}
+        .info-label{font-size:12px;color:#6B7280;margin-bottom:1px}
+        .info-value{font-size:16px;font-weight:600}
+        .mono{font-family:'IBM Plex Mono',monospace;font-size:14px;letter-spacing:0.5px}
+
+        /* LAB LIST — mobile-friendly cards */
+        .lab-list{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+        .lab-card{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid #F3F2F1;background:#FAFAFA;-webkit-tap-highlight-color:transparent}
+        .lab-num{width:28px;height:28px;border-radius:50%;background:#1D70B8;color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+        .lab-body{flex:1;min-width:0}
+        .lab-en{font-size:15px;font-weight:600;color:#0B0C0C}
+        .lab-th{font-size:13px;color:#6B7280}
+        .lab-cat{padding:2px 10px;font-size:11px;font-weight:600;flex-shrink:0;white-space:nowrap}
+
+        /* INFO BOX */
+        .info-box{margin-top:16px;padding:14px 16px;font-size:14px;line-height:1.7}
+        .info-box.blue{background:#F0F6FC;border-left:4px solid #1D70B8;color:#003078}
+        .info-box.gray{background:#F3F2F1;border-left:4px solid #B1B4B6;color:#383F43}
+        .info-box-title{font-weight:700;margin-bottom:2px}
+        .warn-box{padding:14px 16px;background:#FFF7BF;border-left:4px solid #FFD700;font-size:14px;color:#594D00}
+
+        /* EMPTY */
+        .empty{text-align:center;padding:48px 16px}
+        .empty-title{font-size:17px;font-weight:600;color:#6B7280;margin:12px 0 4px}
+        .empty-sub{font-size:14px;color:#B1B4B6}
+
+        /* SCHEDULE */
+        .schedule-list{display:flex;flex-direction:column;gap:6px}
+        .sched-card{display:flex;align-items:center;gap:14px;padding:14px 16px;border:1px solid #F3F2F1;background:#FAFAFA}
+        .sched-no{width:32px;height:32px;border-radius:50%;background:#1D70B8;color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0}
+        .sched-body{flex:1}
+        .sched-unit{font-size:15px;font-weight:600}
+        .sched-date{font-size:13px;color:#6B7280}
+
+        /* PREP */
+        .prep-list{display:flex;flex-direction:column;gap:4px}
+        .prep-card{display:flex;gap:12px;padding:14px 0;border-bottom:1px solid #F3F2F1}
+        .prep-card:last-child{border-bottom:none}
+        .prep-num{width:30px;height:30px;border-radius:50%;background:#F3F2F1;color:#383F43;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+        .prep-num-imp{background:#1D70B8;color:#fff}
+        .prep-body{flex:1;min-width:0}
+        .prep-title{font-size:15px;font-weight:700;margin-bottom:2px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+        .prep-desc{font-size:13px;color:#6B7280;line-height:1.5}
+        .badge-imp{padding:1px 8px;font-size:11px;font-weight:700;background:#FEE2E2;color:#991B1B}
+
+        /* STATS */
+        .stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:#E5E7EB;border:1px solid #E5E7EB;margin-bottom:24px}
+        .stat-card{background:#fff;padding:16px;text-align:center}
+        .stat-val{font-size:28px;font-weight:700;line-height:1}
+        .stat-label{font-size:13px;color:#6B7280;margin-top:4px}
+        .section-title{font-size:19px;font-weight:700;margin-bottom:4px}
+        .section-sub{font-size:13px;color:#6B7280;margin-bottom:14px}
+        .subsection-title{font-size:16px;font-weight:700;margin:0 0 10px}
+        .rights-list{display:flex;flex-direction:column;gap:10px;margin-bottom:24px}
+        .rights-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+        .right-tag-sm{padding:3px 12px;font-size:12px;font-weight:600;flex-shrink:0;min-width:100px;text-align:center}
+        .rights-bar-wrap{flex:1;min-width:60px;height:8px;background:#F3F2F1}
+        .rights-bar{height:100%;transition:width 0.5s}
+        .rights-count{font-size:13px;font-weight:600;color:#6B7280;min-width:70px;text-align:right}
+        .cond-list{display:flex;flex-direction:column;gap:10px}
+        .cond-card{padding:14px 16px;background:#F0F6FC;border-left:4px solid #1D70B8}
+        .cond-title{font-size:14px;font-weight:700}
+        .cond-sub{font-size:13px;font-weight:600;color:#1D70B8;margin-bottom:4px}
+        .cond-desc{font-size:13px;color:#6B7280}
+
+        /* FOOTER */
+        .footer{border-top:1px solid #E5E7EB;padding:16px 0;display:flex;flex-direction:column;gap:2px;font-size:12px;color:#B1B4B6;text-align:center;margin-top:8px}
+
+        /* RESPONSIVE — tablets */
+        @media(min-width:640px){
+          .container{padding:0 24px}
+          .info-grid{grid-template-columns:repeat(4,1fr)}
+          .stat-grid{grid-template-columns:repeat(4,1fr)}
+          .footer{flex-direction:row;justify-content:space-between;text-align:left}
+        }
+
+        /* PRINT */
+        @media print{
+          .topbar,.hero,.tabs,.btn-primary,.btn-clear,.search-section{display:none!important}
+          .tab-content{padding-top:0}
+        }
+      `}</style>
+    </div>
+  );
+}
+
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<App />);
+</script>
+</body>
+</html>
