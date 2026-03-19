@@ -302,20 +302,40 @@ function App() {
           <section className="tab-content">
             <h3 className="section-title">ตารางวันตรวจสุขภาพ</h3>
             <p className="section-sub">23–27 มีนาคม 2569</p>
-            <div className="schedule-list">
-              {SCHEDULE.map((r,i)=>{
-                const isToday = r.date === getTodaySchedDate();
-                return(
-                <div key={i} className={`sched-card ${isToday?"sched-today":""}`}>
-                  <div className={`sched-no ${isToday?"sched-no-today":""}`}>{r.no}</div>
-                  <div className="sched-body">
-                    <div className="sched-unit">{r.unit}{isToday&&<span className="sched-today-badge">วันนี้</span>}</div>
-                    <div className={`sched-date ${isToday?"sched-date-today":""}`}>{r.date}</div>
+
+            {(() => {
+              const dayNames = {"23 มี.ค. 69":"วันจันทร์","24 มี.ค. 69":"วันอังคาร","25 มี.ค. 69":"วันพุธ","26 มี.ค. 69":"วันพฤหัสบดี","27 มี.ค. 69":"วันศุกร์"};
+              const dayColors = {"23 มี.ค. 69":"#1D70B8","24 มี.ค. 69":"#7C3AED","25 มี.ค. 69":"#0891B2","26 มี.ค. 69":"#D97706","27 มี.ค. 69":"#00703C"};
+              const grouped = {};
+              SCHEDULE.forEach(s => { if(!grouped[s.date]) grouped[s.date]=[]; grouped[s.date].push(s); });
+              const todayDate = getTodaySchedDate();
+              return SCHED_DATES.map((date,di) => {
+                const items = grouped[date]||[];
+                const isToday = date === todayDate;
+                const clr = dayColors[date]||"#1D70B8";
+                return (
+                  <div key={di} className={`sd-day ${isToday?"sd-day-today":""}`}>
+                    <div className="sd-day-header" style={{borderLeftColor:clr}}>
+                      <div className="sd-day-left">
+                        <span className="sd-day-name" style={{color:clr}}>{dayNames[date]||""}</span>
+                        <span className="sd-day-date">{date}</span>
+                      </div>
+                      {isToday && <span className="sd-today-pill">วันนี้</span>}
+                      <span className="sd-day-count" style={{background:clr+"14",color:clr}}>{items.length} หน่วยงาน</span>
+                    </div>
+                    <div className="sd-items">
+                      {items.map((r,ri) => (
+                        <div key={ri} className="sd-item">
+                          <div className="sd-item-no" style={{background:clr}}>{r.no}</div>
+                          <div className="sd-item-unit">{r.unit}</div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </div>
                 );
-              })}
-            </div>
+              });
+            })()}
+
             <div className="warn-box" style={{marginTop:"16px"}}>หากวันตรวจตรงกับลา/ลงเวร สามารถตรวจวันอื่นได้</div>
           </section>
         )}
@@ -325,72 +345,94 @@ function App() {
           <section className="tab-content">
 
             {/* การเตรียมตัวก่อนตรวจสุขภาพ */}
-            <h3 className="section-title">การเตรียมตัวก่อนตรวจสุขภาพ</h3>
-            <p className="section-sub">สิ่งที่ต้องปฏิบัติก่อนวันตรวจ</p>
-            <div className="prep-list">
-              <div className="prep-card">
-                <div className="prep-num prep-num-imp">1</div>
-                <div className="prep-body">
-                  <div className="prep-title">งดอาหารก่อนเจาะเลือด FBS<span className="badge-imp">สำคัญ</span></div>
-                  <div className="prep-desc">ผู้ที่ต้องตรวจ FBS (Fasting Blood Sugar) ต้องงดอาหารอย่างน้อย 8–10 ชั่วโมงก่อนการเจาะเลือด ดื่มน้ำเปล่าได้ตามปกติ</div>
-                </div>
+            <div className="prep-header">
+              <div className="prep-header-icon">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2" stroke="#D97706" strokeWidth="1.5" strokeLinecap="round"/><rect x="9" y="3" width="6" height="4" rx="1" stroke="#D97706" strokeWidth="1.5"/><path d="M9 12l2 2 4-4" stroke="#D97706" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
               </div>
-              <div className="prep-card">
-                <div className="prep-num prep-num-imp">2</div>
-                <div className="prep-body">
-                  <div className="prep-title">งดอาหารก่อนเจาะเลือด Lipid<span className="badge-imp">สำคัญ</span></div>
-                  <div className="prep-desc">ผู้ที่ต้องตรวจ Lipid (Lipid Profile, Cholesterol, Triglyceride, HDL, LDL) ต้องงดอาหารอย่างน้อย 12 ชั่วโมงก่อนเจาะเลือดตรวจ ดื่มน้ำเปล่าได้ตามปกติ</div>
+              <div>
+                <h3 className="prep-section-title">การเตรียมตัวก่อนตรวจสุขภาพ</h3>
+                <p className="prep-section-sub">สิ่งที่ต้องปฏิบัติก่อนวันตรวจ</p>
+              </div>
+            </div>
+
+            <div className="prep-alert-grid">
+              <div className="prep-alert-card">
+                <div className="prep-alert-icon-wrap">
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#DC2626" strokeWidth="1.5"/><path d="M12 7v5M12 15h.01" stroke="#DC2626" strokeWidth="2" strokeLinecap="round"/></svg>
                 </div>
+                <div className="prep-alert-badge">สำคัญ</div>
+                <h4 className="prep-alert-title">งดอาหารก่อนเจาะเลือด FBS</h4>
+                <div className="prep-alert-highlight">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#B91C1C" strokeWidth="1.5"/><path d="M12 8v4l2 2" stroke="#B91C1C" strokeWidth="1.5" strokeLinecap="round"/></svg>
+                  งดอย่างน้อย <strong>8–10 ชั่วโมง</strong>
+                </div>
+                <p className="prep-alert-desc">ผู้ที่ต้องตรวจ FBS (Fasting Blood Sugar) ต้องงดอาหารก่อนการเจาะเลือด ดื่มน้ำเปล่าได้ตามปกติ</p>
+              </div>
+
+              <div className="prep-alert-card prep-alert-card-lipid">
+                <div className="prep-alert-icon-wrap prep-alert-icon-lipid">
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#D97706" strokeWidth="1.5"/><path d="M12 7v5M12 15h.01" stroke="#D97706" strokeWidth="2" strokeLinecap="round"/></svg>
+                </div>
+                <div className="prep-alert-badge prep-alert-badge-lipid">สำคัญ</div>
+                <h4 className="prep-alert-title">งดอาหารก่อนเจาะเลือด Lipid</h4>
+                <div className="prep-alert-highlight prep-alert-hl-lipid">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#92400E" strokeWidth="1.5"/><path d="M12 8v4l2 2" stroke="#92400E" strokeWidth="1.5" strokeLinecap="round"/></svg>
+                  งดอย่างน้อย <strong>12 ชั่วโมง</strong>
+                </div>
+                <p className="prep-alert-desc">ผู้ที่ต้องตรวจ Lipid (Cholesterol, Triglyceride, HDL, LDL) ดื่มน้ำเปล่าได้ตามปกติ</p>
               </div>
             </div>
 
             {/* ขั้นตอนการรับบริการ */}
-            <h3 className="section-title" style={{marginTop:"28px"}}>ขั้นตอนการรับบริการ</h3>
-            <p className="section-sub">ลำดับขั้นตอนในวันตรวจสุขภาพ</p>
-            <div className="prep-list">
-              <div className="prep-card">
-                <div className="prep-num">1</div>
-                <div className="prep-body">
-                  <div className="prep-title">ลงทะเบียนเข้ารับบริการ</div>
-                  <div className="prep-desc">ใช้บัตรประชาชนยืนยันตัวตน เพื่อรับใบนำทางและรับคิวตรวจ</div>
-                </div>
+            <div className="prep-header" style={{marginTop:"32px"}}>
+              <div className="prep-header-icon prep-header-icon-blue">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" stroke="#1D70B8" strokeWidth="1.5"/><path d="M12 6v6l4 2" stroke="#1D70B8" strokeWidth="1.5" strokeLinecap="round"/></svg>
               </div>
-              <div className="prep-card">
-                <div className="prep-num">2</div>
-                <div className="prep-body">
-                  <div className="prep-title">วัด Vital Sign / ชั่งน้ำหนัก / วัดรอบเอว</div>
-                  <div className="prep-desc">วัดความดัน ชีพจร ชั่งน้ำหนัก วัดรอบเอว ที่จุดประชาสัมพันธ์ พร้อมแนบผลที่ใบนำทาง</div>
-                </div>
-              </div>
-              <div className="prep-card prep-card-sub">
-                <div className="prep-num prep-num-sso">2.1</div>
-                <div className="prep-body">
-                  <div className="prep-title">สิทธิประกันสังคม</div>
-                  <div className="prep-desc">ยื่นใบนำทางที่งานประกัน ขอ Authen + ตรวจสอบรายการตรวจ ก่อนเข้ารับบริการ</div>
-                </div>
-              </div>
-              <div className="prep-card">
-                <div className="prep-num">3</div>
-                <div className="prep-body">
-                  <div className="prep-title">เจาะเลือดและตรวจปัสสาวะ</div>
-                  <div className="prep-desc">นำใบนำทางยื่นที่ห้องแลป / งานเวช เพื่อเจาะเลือด (หน่วยงานใดที่ประสงค์เจาะเลือดเอง ให้นำ Specimen ส่งที่งานเวช พร้อมใบนำทาง) และตรวจปัสสาวะ (Clean-Voided Midstream Urine) ควรเก็บและส่งภายใน 2 ชั่วโมง</div>
-                </div>
-              </div>
-              <div className="prep-card">
-                <div className="prep-num">4</div>
-                <div className="prep-body">
-                  <div className="prep-title">ถ่ายภาพรังสี Chest X-Ray</div>
-                  <div className="prep-desc">ถ่ายเอกซเรย์ปอด ช่วงเช้าหรือช่วงบ่าย (ก่อน 14.00 น.)</div>
-                </div>
-              </div>
-              <div className="prep-card">
-                <div className="prep-num">5</div>
-                <div className="prep-body">
-                  <div className="prep-title">พบแพทย์ฟังผล</div>
-                  <div className="prep-desc">หากต้องการพบแพทย์ ให้รับใบนำทางที่ OPD แล้วเข้าพบแพทย์ตอนบ่าย 15.00 น. เป็นต้นไป</div>
-                </div>
+              <div>
+                <h3 className="prep-section-title">ขั้นตอนการรับบริการ</h3>
+                <p className="prep-section-sub">ลำดับขั้นตอนในวันตรวจสุขภาพ</p>
               </div>
             </div>
+
+            <div className="timeline">
+              {[
+                {n:1, title:"ลงทะเบียนเข้ารับบริการ", desc:"ใช้บัตรประชาชนยืนยันตัวตน เพื่อรับใบนำทางและรับคิวตรวจ", color:"#1D70B8"},
+                {n:2, title:"วัด Vital Sign / ชั่งน้ำหนัก / วัดรอบเอว", desc:"วัดความดัน ชีพจร ชั่งน้ำหนัก วัดรอบเอว ที่จุดประชาสัมพันธ์ พร้อมแนบผลที่ใบนำทาง", color:"#0891B2"},
+                {n:null, title:"สิทธิประกันสังคม", desc:"ยื่นใบนำทางที่งานประกัน ขอ Authen + ตรวจสอบรายการตรวจ ก่อนเข้ารับบริการ", color:"#D97706", isSub:true},
+                {n:3, title:"เจาะเลือดและตรวจปัสสาวะ", desc:"นำใบนำทางยื่นที่ห้องแลป / งานเวช เพื่อเจาะเลือด (หน่วยงานใดที่ประสงค์เจาะเลือดเอง ให้นำ Specimen ส่งที่งานเวช พร้อมใบนำทาง) และตรวจปัสสาวะ (Clean-Voided Midstream Urine) ควรเก็บและส่งภายใน 2 ชั่วโมง", color:"#7C3AED"},
+                {n:4, title:"ถ่ายภาพรังสี Chest X-Ray", desc:"ถ่ายเอกซเรย์ปอด ช่วงเช้าหรือช่วงบ่าย (ก่อน 14.00 น.)", color:"#0E7490"},
+                {n:5, title:"พบแพทย์ฟังผล", desc:"หากต้องการพบแพทย์ ให้รับใบนำทางที่ OPD แล้วเข้าพบแพทย์ตอนบ่าย 15.00 น. เป็นต้นไป", color:"#00703C", isLast:true},
+              ].map((s,i)=>(
+                s.isSub ? (
+                  <div key={i} className="tl-sub-step">
+                    <div className="tl-sub-connector"/>
+                    <div className="tl-sub-card">
+                      <div className="tl-sub-badge">2.1</div>
+                      <div className="tl-sub-body">
+                        <div className="tl-sub-title">{s.title}</div>
+                        <div className="tl-sub-desc">{s.desc}</div>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div key={i} className={`tl-step ${s.isLast?"tl-step-last":""}`}>
+                    <div className="tl-rail">
+                      <div className="tl-dot" style={{background:s.color, boxShadow:`0 0 0 4px ${s.color}18`}}>
+                        <span className="tl-dot-num">{s.n}</span>
+                      </div>
+                      {!s.isLast && <div className="tl-line"/>}
+                    </div>
+                    <div className="tl-content">
+                      <div className="tl-text">
+                        <h4 className="tl-title">{s.title}</h4>
+                        <p className="tl-desc">{s.desc}</p>
+                      </div>
+                    </div>
+                  </div>
+                )
+              ))}
+            </div>
+
           </section>
         )}
 
@@ -540,29 +582,66 @@ function App() {
         .empty-title{font-size:17px;font-weight:600;color:#6B7280;margin:12px 0 4px}
         .empty-sub{font-size:14px;color:#B1B4B6}
 
-        /* SCHEDULE */
-        .schedule-list{display:flex;flex-direction:column;gap:6px}
-        .sched-card{display:flex;align-items:center;gap:14px;padding:14px 16px;border:1px solid #F3F2F1;background:#FAFAFA;transition:all 0.2s}
-        .sched-today{background:linear-gradient(135deg,#EFF6FF,#DBEAFE);border:2px solid #1D70B8;padding:18px 16px;box-shadow:0 2px 8px rgba(29,112,184,0.15)}
-        .sched-no{width:32px;height:32px;border-radius:50%;background:#1D70B8;color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0}
-        .sched-no-today{width:40px;height:40px;font-size:16px;background:#00703C;animation:pulse-sched 2s infinite}
-        .sched-body{flex:1}
-        .sched-unit{font-size:15px;font-weight:600;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-        .sched-date{font-size:13px;color:#6B7280}
-        .sched-date-today{font-size:16px;font-weight:700;color:#1D70B8}
-        .sched-today-badge{display:inline-block;padding:2px 10px;background:#00703C;color:#fff;font-size:11px;font-weight:700;animation:pulse-sched 2s infinite}
+        /* SCHEDULE — Grouped by Date */
+        .sd-day{margin-bottom:16px}
+        .sd-day-today{position:relative}
+        .sd-day-header{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 16px;border-left:5px solid #1D70B8;background:#F8FAFC;margin-bottom:2px}
+        .sd-day-left{display:flex;flex-direction:column;flex:1;min-width:0}
+        .sd-day-name{font-size:13px;font-weight:700;letter-spacing:0.3px}
+        .sd-day-date{font-size:20px;font-weight:700;color:#0B0C0C;line-height:1.2}
+        .sd-day-count{padding:3px 12px;font-size:12px;font-weight:600;border-radius:20px;white-space:nowrap}
+        .sd-today-pill{padding:3px 14px;background:#00703C;color:#fff;font-size:12px;font-weight:700;border-radius:20px;animation:pulse-sched 2s infinite}
         @keyframes pulse-sched{0%,100%{opacity:1}50%{opacity:0.7}}
+        .sd-items{display:flex;flex-direction:column;gap:2px}
+        .sd-item{display:flex;align-items:center;gap:12px;padding:12px 16px 12px 22px;background:#fff;border:1px solid #F3F2F1;border-left:none}
+        .sd-item-no{width:28px;height:28px;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+        .sd-item-unit{font-size:15px;font-weight:600;color:#0B0C0C}
 
-        /* PREP */
-        .prep-list{display:flex;flex-direction:column;gap:4px}
-        .prep-card{display:flex;gap:12px;padding:14px 0;border-bottom:1px solid #F3F2F1}
-        .prep-card:last-child{border-bottom:none}
-        .prep-num{width:30px;height:30px;border-radius:50%;background:#F3F2F1;color:#383F43;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
-        .prep-num-imp{background:#1D70B8;color:#fff}
-        .prep-body{flex:1;min-width:0}
-        .prep-title{font-size:15px;font-weight:700;margin-bottom:2px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-        .prep-desc{font-size:13px;color:#6B7280;line-height:1.5}
-        .badge-imp{padding:1px 8px;font-size:11px;font-weight:700;background:#FEE2E2;color:#991B1B}
+        /* PREP — Section Header */
+        .prep-header{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+        .prep-header-icon{width:52px;height:52px;border-radius:16px;background:linear-gradient(135deg,#FFF7ED,#FEF3C7);display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1px solid #FDE68A}
+        .prep-header-icon-blue{background:linear-gradient(135deg,#EFF6FF,#DBEAFE);border-color:#93C5FD}
+        .prep-section-title{font-size:20px;font-weight:700;line-height:1.25;color:#0B0C0C}
+        .prep-section-sub{font-size:13px;color:#6B7280;margin-top:2px}
+
+        /* PREP — Alert Cards */
+        .prep-alert-grid{display:grid;grid-template-columns:1fr;gap:14px}
+        @media(min-width:540px){.prep-alert-grid{grid-template-columns:1fr 1fr}}
+        .prep-alert-card{position:relative;padding:22px 20px 20px;border-radius:16px;background:linear-gradient(160deg,#FFF5F5 0%,#FEE2E2 100%);border:1px solid #FECACA;overflow:hidden;transition:transform 0.2s,box-shadow 0.2s}
+        .prep-alert-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#DC2626,#F87171);border-radius:16px 16px 0 0}
+        .prep-alert-card-lipid{background:linear-gradient(160deg,#FFFBEB 0%,#FEF3C7 100%);border-color:#FDE68A}
+        .prep-alert-card-lipid::before{background:linear-gradient(90deg,#D97706,#FBBF24)}
+        .prep-alert-icon-wrap{margin-bottom:12px}
+        .prep-alert-badge{display:inline-block;padding:3px 12px;font-size:11px;font-weight:700;background:#DC2626;color:#fff;border-radius:20px;margin-bottom:10px;letter-spacing:0.5px}
+        .prep-alert-badge-lipid{background:#D97706}
+        .prep-alert-title{font-size:16px;font-weight:700;color:#0B0C0C;margin-bottom:8px;line-height:1.3}
+        .prep-alert-highlight{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;background:#fff;border-radius:10px;font-size:15px;color:#B91C1C;font-weight:600;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,0.06)}
+        .prep-alert-hl-lipid{color:#92400E}
+        .prep-alert-desc{font-size:13px;color:#6B7280;line-height:1.55}
+
+        /* TIMELINE */
+        .timeline{position:relative;padding:4px 0 0}
+        .tl-step{display:flex;gap:0;min-height:80px;position:relative}
+        .tl-step-last .tl-content{padding-bottom:0}
+        .tl-rail{display:flex;flex-direction:column;align-items:center;width:44px;flex-shrink:0;position:relative}
+        .tl-dot{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative;z-index:2;transition:transform 0.2s}
+        .tl-dot-num{font-size:14px;font-weight:700;color:#fff}
+        .tl-line{flex:1;width:3px;background:linear-gradient(180deg,#CBD5E1,#E2E8F0);margin:4px 0;border-radius:3px}
+        .tl-content{display:flex;align-items:flex-start;gap:0;flex:1;padding:4px 0 28px 12px}
+        .tl-text{flex:1;min-width:0}
+        .tl-title{font-size:16px;font-weight:700;color:#0B0C0C;margin-bottom:4px;line-height:1.3}
+        .tl-desc{font-size:13px;color:#6B7280;line-height:1.55}
+
+        /* TIMELINE SUB-STEP */
+        .tl-sub-step{display:flex;gap:0;position:relative;margin-left:20px}
+        .tl-sub-connector{width:24px;flex-shrink:0;position:relative}
+        .tl-sub-connector::before{content:'';position:absolute;top:50%;left:0;width:20px;height:3px;background:#FDE68A;border-radius:3px}
+        .tl-sub-connector::after{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:linear-gradient(180deg,#CBD5E1,#E2E8F0)}
+        .tl-sub-card{flex:1;display:flex;align-items:flex-start;gap:12px;padding:14px 16px;margin:0 0 0 0;background:linear-gradient(135deg,#FFFBEB,#FEF3C7);border:2px solid #FDE68A;border-radius:12px;margin-bottom:8px}
+        .tl-sub-badge{padding:3px 12px;background:#D97706;color:#fff;font-size:12px;font-weight:700;border-radius:20px;white-space:nowrap;flex-shrink:0}
+        .tl-sub-body{flex:1;min-width:0}
+        .tl-sub-title{font-size:15px;font-weight:700;color:#92400E;margin-bottom:2px}
+        .tl-sub-desc{font-size:13px;color:#78350F;line-height:1.5}
 
         /* STATS */
         .stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:#E5E7EB;border:1px solid #E5E7EB;margin-bottom:24px}
@@ -591,10 +670,6 @@ function App() {
         .sso-note{margin-top:16px;padding:16px 18px;background:#FFF7ED;border:2px solid #F59E0B;border-left:5px solid #D97706;font-size:14px;line-height:1.7;color:#78350F}
         .sso-note-title{font-weight:700;font-size:15px;margin-bottom:6px;display:flex;align-items:center;gap:8px;color:#B45309}
         .sso-note-item{padding:2px 0}
-
-        /* PREP SUB-STEP */
-        .prep-card-sub{margin-left:42px;border-left:3px solid #F59E0B;background:#FFF7ED}
-        .prep-num-sso{width:auto;min-width:34px;padding:0 6px;border-radius:14px;background:#F59E0B;color:#fff;font-size:12px}
 
         /* RESPONSIVE — tablets */
         @media(min-width:640px){
