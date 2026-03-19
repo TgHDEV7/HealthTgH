@@ -9,6 +9,20 @@
 <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+
+<!-- Google Analytics 4 — เปลี่ยน G-SR28TWP8HQ เป็น Measurement ID จริง -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-SR28TWP8HQ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-SR28TWP8HQ');
+
+  // Helper: ส่ง event ไป GA4
+  window.trackEvent = function(name, params) {
+    if (typeof gtag === 'function') gtag('event', name, params);
+  };
+</script>
 </head>
 <body>
 <div id="root"></div>
@@ -129,16 +143,18 @@ function App() {
 
   const doSearch=()=>{
     const c=q.replace(/[\s-]/g,"");
+    window.trackEvent('search',{search_type:/^\d+$/.test(c)?'id_card':'name'});
     if(/^\d+$/.test(c)){
-      if(c.length!==13){setErr("กรุณากรอกเลขบัตรประชาชนให้ครบ 13 หลัก");setResult(null);return;}
+      if(c.length!==13){setErr("กรุณากรอกเลขบัตรประชาชนให้ครบ 13 หลัก");setResult(null);window.trackEvent('search_result',{status:'invalid_id'});return;}
       const f=STAFF.find(s=>s.id===c);
-      if(!f){setErr("ไม่พบข้อมูลในระบบ กรุณาตรวจสอบอีกครั้ง");setResult(null);return;}
+      if(!f){setErr("ไม่พบข้อมูลในระบบ กรุณาตรวจสอบอีกครั้ง");setResult(null);window.trackEvent('search_result',{status:'not_found'});return;}
       setErr("");setAnim(false);setTimeout(()=>{setResult(f);setAnim(true);setTab("search");},30);
+      window.trackEvent('search_result',{status:'found',right:f.right,unit:f.unit});
     } else {
       const rs=STAFF.filter(s=>s.name.includes(q.trim()));
-      if(rs.length===1){setErr("");setAnim(false);setTimeout(()=>{setResult(rs[0]);setAnim(true);setTab("search");},30);}
-      else if(rs.length>1){setErr(`พบ ${rs.length} รายการ กรุณาใช้เลขบัตร 13 หลัก`);setResult(null);}
-      else{setErr("ไม่พบชื่อในระบบ");setResult(null);}
+      if(rs.length===1){setErr("");setAnim(false);setTimeout(()=>{setResult(rs[0]);setAnim(true);setTab("search");},30);window.trackEvent('search_result',{status:'found',right:rs[0].right,unit:rs[0].unit});}
+      else if(rs.length>1){setErr(`พบ ${rs.length} รายการ กรุณาใช้เลขบัตร 13 หลัก`);setResult(null);window.trackEvent('search_result',{status:'multiple',count:rs.length});}
+      else{setErr("ไม่พบชื่อในระบบ");setResult(null);window.trackEvent('search_result',{status:'not_found'});}
     }
   };
 
@@ -198,7 +214,7 @@ function App() {
             {k:"prep",l:"ขั้นตอนการรับบริการ"},
             {k:"stats",l:"สถิติ"},
           ].map(t=>(
-            <button key={t.k} onClick={()=>setTab(t.k)}
+            <button key={t.k} onClick={()=>{setTab(t.k);window.trackEvent('tab_click',{tab_name:t.k,tab_label:t.l});}}
               className={`tab ${tab===t.k?"tab-active":""}`}>{t.l}</button>
           ))}
         </nav>
